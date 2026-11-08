@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'TrucoArgentino-Android.zip'
+      - 'TrucoArgentino-Android-corregido.zip'
       - '.github/workflows/build-apk.yml'
 
 jobs:
@@ -25,7 +25,7 @@ jobs:
           gradle-version: '8.9'
 
       - name: Extraer proyecto
-        run: unzip -q TrucoArgentino-Android.zip
+        run: unzip -q TrucoArgentino-Android-corregido.zip
 
       - name: Compilar aplicación
         run: |
