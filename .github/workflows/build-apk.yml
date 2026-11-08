@@ -12,30 +12,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Descargar repositorio
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Preparar Java
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
+
+      - uses: android-actions/setup-android@v3
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
 
       - name: Extraer proyecto
         run: |
           mkdir proyecto
           unzip TrucoArgentino-Android.zip -d proyecto
-          find proyecto -name gradlew -type f
 
       - name: Compilar APK
-        run: |
-          GRADLEW=$(find proyecto -name gradlew -type f | head -n 1)
-          chmod +x "$GRADLEW"
-          cd "$(dirname "$GRADLEW")"
-          ./gradlew assembleDebug
+        run: gradle -p proyecto/TrucoArgentino assembleDebug
 
       - name: Guardar APK
         uses: actions/upload-artifact@v4
         with:
           name: TrucoArgentino-APK
-          path: proyecto/**/build/outputs/apk/debug/*.apk
+          path: proyecto/TrucoArgentino/app/build/outputs/apk/debug/app-debug.apk
