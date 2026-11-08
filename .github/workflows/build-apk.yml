@@ -1,0 +1,41 @@
+name: Generar APK
+
+on:
+  push:
+    paths:
+      - 'TrucoArgentino-Android.zip'
+      - '.github/workflows/build-apk.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Extraer proyecto
+        run: |
+          mkdir proyecto
+          unzip TrucoArgentino-Android.zip -d proyecto
+          find proyecto -name gradlew -type f
+
+      - name: Compilar APK
+        run: |
+          GRADLEW=$(find proyecto -name gradlew -type f | head -n 1)
+          chmod +x "$GRADLEW"
+          cd "$(dirname "$GRADLEW")"
+          ./gradlew assembleDebug
+
+      - name: Guardar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: TrucoArgentino-APK
+          path: proyecto/**/build/outputs/apk/debug/*.apk
